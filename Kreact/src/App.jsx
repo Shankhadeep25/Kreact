@@ -6,6 +6,9 @@ import {BrowserRouter,
   Route,Routes
 } from "react-router-dom";
 
+import Login from './Login'
+import Profile from './Profile'
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -14,8 +17,8 @@ function App() {
       <BrowserRouter basename="/">
         <Routes>
           <Route path="/" element={<Body/>}>
-            <Route path="/login" element={<div>login Page</div>}/>
-            <Route path="/test" element={<div>test Page</div>}/>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/test" element={<Profile/>}/>
           </Route>
         </Routes>
       </BrowserRouter>
