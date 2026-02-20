@@ -1,20 +1,25 @@
 import axios from "axios"
 import { BASE_URL } from "../utils/constants"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
 
 const Connections = () => {
     const connections = useSelector((store) => store.connections)
     const dispatch = useDispatch();
+    const [error, setError] = useState("")
+
     const fetchConnections = async () => {
+        setError("")
         try{
             const res = await axios.get(BASE_URL + "/user/connections", {
                 withCredentials: true
             });
             dispatch(addConnections(res?.data?.data))
         }
-        catch (err) {}
+        catch (err) {
+            setError(err.response.data);
+        }
     }
 
     useEffect(() => {
@@ -28,9 +33,9 @@ const Connections = () => {
     <div className="text-center my-10">
         <h1 className="text-bold text-2xl">Connections</h1>
         {connections.map((connection) => {
-            const {firstName, lastName, photoUrl, age, gender, about} = connection;
+            const {_id, firstName, lastName, photoUrl, age, gender, about} = connection;
             return (
-              <div className="flex m-4 p-4 rounded-lg bg-base-300 w-1/2 mx-auto">
+              <div key={_id} className="flex m-4 p-4 rounded-lg bg-base-300 w-1/2 mx-auto">
                 <div>
                   <img src={photoUrl} alt="Photo" 
                   className="w-20 h-20 rounded-full"/>
@@ -45,6 +50,7 @@ const Connections = () => {
               </div>
             );
         })}
+        <p className="text-red-500">{error}</p>
     </div>
   )
 }
