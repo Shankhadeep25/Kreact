@@ -6,10 +6,11 @@ const Profile = () => {
 
   return (
     user && (
-    <div>
-      {<EditProfile user= {user}/>}
-    </div>)
-  )
+      <div className="min-h-screen flex items-center justify-center px-4">
+        {<EditProfile user={user} />}
+      </div>
+    )
+  );
 }
 
 export default Profile
