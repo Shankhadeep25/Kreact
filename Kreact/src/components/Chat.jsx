@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom"
+import axios from "axios"
 import createSocketConnection from "../utils/socket";
+import { BASE_URL } from "../utils/constants";
 
 const Chat = () => {
     const user = useSelector((store) => store.user)
@@ -11,6 +13,23 @@ const Chat = () => {
     const userId = user?._id
     const firstName = user?.firstName
     const photo = user?.photoUrl
+
+    const fetchChatMessages = async () => {
+        const chat = await axios.get(BASE_URL+ "/chat/" + targetUserId, {withCredentials: true})
+
+        console.log(chat.data.messages);
+
+        const chatMessages = chat?.data?.messages.map((msg) => {
+            return {firstName: msg?.senderId?.firstName, lastName: msg?.senderId?.lastName, text: msg?.text}
+        })
+
+        setMessages(chatMessages)
+    }
+
+    useEffect(() => {
+        fetchChatMessages()
+    }, [])
+
     useEffect(() => {
         if(!userId) {return;}
         const socket = createSocketConnection()
@@ -20,6 +39,11 @@ const Chat = () => {
             console.log(firstName+ " : " +text);
             setMessages((messages) => [...messages, {firstName, text, photo}])
         });
+
+            socket.on("errorMessage", (message) => {
+              alert(message); // or setError(message)
+            });
+
 
         return () => {
             socket.disconnect();
